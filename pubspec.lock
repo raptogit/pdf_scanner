@@ -15,20 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0-nullsafety.1"
-  camera:
-    dependency: "direct main"
-    description:
-      name: camera
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.8+11"
-  camerakit:
-    dependency: "direct main"
-    description:
-      name: camerakit
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.60"
   characters:
     dependency: transitive
     description:
@@ -282,13 +268,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0-nullsafety.3"
-  visibility_detector:
-    dependency: transitive
-    description:
-      name: visibility_detector
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.5"
   win32:
     dependency: transitive
     description:
@@ -305,4 +284,4 @@ packages:
     version: "0.1.2"
 sdks:
   dart: ">=2.10.0-110 <=2.11.0-161.0.dev"
-  flutter: ">=1.13.8 <2.0.0"
+  flutter: ">=1.12.13+hotfix.5 <2.0.0"
