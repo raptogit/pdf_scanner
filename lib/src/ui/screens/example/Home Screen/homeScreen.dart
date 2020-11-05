@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_scanner/src/ui/screens/example/example.dart';
 
-class homeScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _homeScreenState createState() => _homeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _homeScreenState extends State<homeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +14,9 @@ class _homeScreenState extends State<homeScreen> {
         title: Text('Pdf Scanner'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ExamplePage(),
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => ExamplePage(),
+        )),
         child: Icon(Icons.add_circle),
       ),
     );
