@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pdf_scanner/src/ui/screens/example/example.dart';
+import 'package:pdf_scanner/src/ui/screens/example/Home%20Screen/homeScreen.dart';
 
 Future<void> main() async {
   runApp(MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ExamplePage(),
+      home: homeScreen(),
     );
   }
 }

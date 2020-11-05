@@ -41,7 +41,7 @@ class _ExamplePageState extends State<ExamplePage> {
           TextButton(
               onPressed: () async {
                 File _pickedFile = await ImagePicker()
-                    .getImage(source: ImageSource.gallery)
+                    .getImage(source: ImageSource.camera)
                     .then((value) => File(value.path));
 
                 _file = _pickedFile;
