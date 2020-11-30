@@ -104,13 +104,19 @@ class _FolderScreenState extends State<FolderScreen> {
         title: Text(widget.folderBox.get(widget.index).folderName),
       ),
       body: _files.length != 0
-          ? ListView(
-              children: _files
-                  .map((e) =>
-                      Container(height: 200, width: 200, child: Image.file(e)))
-                  .toList()
-                  .reversed
-                  .toList(),
+          ? GridView.builder(
+              itemCount: _files.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 4.0,
+                  mainAxisSpacing: 4.0),
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                    color: Colors.grey.withOpacity(0.5),
+                    height: 150,
+                    width: 150,
+                    child: Image.file(_files[index], fit: BoxFit.fitHeight));
+              },
             )
           : Container(),
       floatingActionButton: FloatingActionButton(
