@@ -9,7 +9,7 @@ class Folder extends HiveObject {
   final String folderName;
 
   @HiveField(1)
-  final List<File> files;
+  final List<String> files;
 
   @HiveField(2)
   final String numberOfItems;

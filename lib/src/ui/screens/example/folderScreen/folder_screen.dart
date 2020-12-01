@@ -2,16 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pdf_scanner/src/models/folder_model.dart';
+import 'package:pdf_scanner/src/services/hive_pref.dart';
+import 'package:pdf_scanner/src/services/internal.dart';
 
 class FolderScreen extends StatefulWidget {
-  final Box<Folder> folderBox;
   final int index;
 
-  FolderScreen({Key key, this.folderBox, this.index}) : super(key: key);
+  FolderScreen({Key key, this.index}) : super(key: key);
   @override
   _FolderScreenState createState() => _FolderScreenState();
 }
@@ -19,15 +19,21 @@ class FolderScreen extends StatefulWidget {
 enum FileState { empty, notEmpty }
 
 class _FolderScreenState extends State<FolderScreen> {
+  Box<Folder> folderBox;
   FileState _fileState;
   File _file;
-  List<File> _files;
+  File _fileToAdd;
+  List<String> _files;
+  Folder _folder;
   @override
   void initState() {
+    print(widget.index);
     super.initState();
     setState(() {
+      folderBox = Hive.box<Folder>(HiveInit.boxName);
+      _folder = folderBox.get(widget.index);
       _fileState = FileState.empty;
-      _files = [...widget.folderBox.getAt(widget.index).files];
+      _files = [..._folder.files];
     });
   }
 
@@ -85,7 +91,11 @@ class _FolderScreenState extends State<FolderScreen> {
             setState(() {
               _file = _editedImageFile;
             });
-            _files.add(File(_file.path));
+            _fileToAdd =
+                await Internal().saveFileOnStorage(fileName: _file.path);
+            print("${_fileToAdd.path} and the rest");
+
+            _files.add(_fileToAdd.path);
           } else {
             print("null Emir");
           }
@@ -98,10 +108,10 @@ class _FolderScreenState extends State<FolderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.folderBox.getAt(widget.index).files);
+    print(_folder.files ?? "Non ");
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.folderBox.get(widget.index).folderName),
+        title: Text(_folder.folderName ?? "non"),
       ),
       body: _files.length != 0
           ? GridView.builder(
@@ -115,15 +125,22 @@ class _FolderScreenState extends State<FolderScreen> {
                     color: Colors.grey.withOpacity(0.5),
                     height: 150,
                     width: 150,
-                    child: Image.file(_files[index], fit: BoxFit.fitHeight));
+                    child:
+                        Image.file(File(_files[index]), fit: BoxFit.fitHeight));
               },
             )
           : Container(),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            initFile().then((value) {
-              var getfolder = widget.folderBox.getAt(widget.index);
-              getfolder.files.add(_file);
+            initFile().then((value) async {
+              try {
+                var getfolder = _folder;
+
+                getfolder.files.add(_fileToAdd.path);
+                getfolder.save();
+              } catch (e) {
+                print(e);
+              }
             });
           },
           child: Icon(Icons.add)),

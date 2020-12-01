@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pdf_scanner/src/models/folder_model.dart';
 import 'package:pdf_scanner/src/services/hive_pref.dart';
 import 'package:pdf_scanner/src/ui/screens/example/folderScreen/folder_screen.dart';
@@ -15,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<File> _files = [];
-  String error;
   Box<Folder> _folderBox;
   TextEditingController _controller;
   @override
@@ -26,70 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _folderBox = Hive.box<Folder>(HiveInit.boxName);
     });
   }
-
-  // Future<File> editFile(File file) async {
-  //   File croppedFile;
-  //   if (_fileState == FileState.notEmpty) {
-  //     croppedFile = await ImageCropper.cropImage(
-  //         sourcePath: file.path,
-  //         aspectRatioPresets: [
-  //           CropAspectRatioPreset.square,
-  //           CropAspectRatioPreset.ratio3x2,
-  //           CropAspectRatioPreset.ratio4x3,
-  //           CropAspectRatioPreset.original,
-  //           CropAspectRatioPreset.ratio5x4,
-  //           CropAspectRatioPreset.ratio7x5,
-  //           CropAspectRatioPreset.ratio16x9
-  //         ],
-  //         androidUiSettings: AndroidUiSettings(
-  //             toolbarTitle: 'Cropper',
-  //             toolbarColor: Colors.blue,
-  //             toolbarWidgetColor: Colors.white,
-  //             initAspectRatio: CropAspectRatioPreset.original,
-  //             statusBarColor: Colors.black,
-  //             lockAspectRatio: false),
-  //         iosUiSettings: IOSUiSettings(
-  //           title: 'Cropper',
-  //         ));
-
-  //     if (croppedFile == null) {
-  //       setState(() {
-  //         croppedFile = file;
-  //       });
-  //     }
-  //   }
-  //   setState(() {
-  //     _fileState = FileState.empty;
-  //   });
-  //   return croppedFile;
-  // }
-
-  // Future<void> initFile() async {
-  //   try {
-  //     await ImagePicker()
-  //         .getImage(source: ImageSource.camera)
-  //         .then((value) => File(value.path))
-  //         .then(
-  //       (value) async {
-  //         if (value != null) {
-  //           setState(() {
-  //             _fileState = FileState.notEmpty;
-  //           });
-
-  //           File _editedImageFile = await editFile(value);
-  //           setState(() {
-  //             _file = _editedImageFile;
-  //           });
-  //           _files.add(File(_file.path));
-  //         } else {
-  //           print("null Emir");
-  //         }
-  //       },
-  //     );
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,14 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => FolderScreen(
-                              folderBox: folderbox,
                               index: keys[index],
                             ),
                           ),
                         );
                       },
                       leading: Icon(Icons.folder),
-                      title: Text(folder.folderName),
+                      title: Text(folder.folderName ?? "Non"),
                       subtitle: Text(
                         folder.createdOn.toString(),
                       ),
@@ -195,9 +127,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 folderName: _controller.text,
                                 numberOfItems: "",
                               );
-                              await _folderBox
-                                  .add(newFolder)
-                                  .then((value) => Navigator.pop(context));
+                              await _folderBox.add(newFolder).then(
+                                (value) {
+                                  Navigator.pop(context);
+                                  _controller.clear();
+                                },
+                              );
                             },
                             child: Center(
                               child: Text("Create Folder"),
