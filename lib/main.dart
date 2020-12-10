@@ -21,3 +21,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+//Error in storing images
+//database not working properly when we try to store the images
+//App crashes when we try to save the file
