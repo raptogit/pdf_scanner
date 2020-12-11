@@ -24,3 +24,7 @@ class MyApp extends StatelessWidget {
 //Error in storing images
 //database not working properly when we try to store the images
 //App crashes when we try to save the file
+
+// This app works fine. or at least on my phone
+// which android version do you have/use on your phone?
+// I will try on other people's phone and update you in our next meeting.

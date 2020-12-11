@@ -76,10 +76,13 @@ class _FolderScreenState extends State<FolderScreen> {
 
   Future<void> initFile() async {
     try {
-      await ImagePicker()
-          .getImage(source: ImageSource.camera)
-          .then((value) => File(value.path))
-          .then(
+      await ImagePicker().getImage(source: ImageSource.camera).then((value) {
+        if (value != null) {
+          return File(value.path);
+        } else {
+          return null;
+        }
+      }).then(
         (value) async {
           if (value != null) {
             setState(() {
@@ -97,6 +100,9 @@ class _FolderScreenState extends State<FolderScreen> {
 
             _files.add(_fileToAdd.path);
           } else {
+            setState(() {
+              _fileState = FileState.empty;
+            });
             print("null Emir");
           }
         },
@@ -109,6 +115,7 @@ class _FolderScreenState extends State<FolderScreen> {
   @override
   Widget build(BuildContext context) {
     print(_folder.files ?? "Non ");
+    print(_folder.files.length ?? "Non ");
     return Scaffold(
       appBar: AppBar(
         title: Text(_folder.folderName ?? "non"),
