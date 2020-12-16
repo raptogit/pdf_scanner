@@ -1,0 +1,1 @@
+enum FileState { empty, notEmpty }
