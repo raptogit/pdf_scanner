@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -115,7 +114,7 @@ class _FolderScreenState extends State<FolderScreen> {
   @override
   Widget build(BuildContext context) {
     print(_folder.files ?? "Non ");
-    print(_folder.files.length ?? "Non ");
+    // print(_folder.files.length ?? "Non ");
     return Scaffold(
       appBar: AppBar(
         title: Text(_folder.folderName ?? "non"),
@@ -145,6 +144,7 @@ class _FolderScreenState extends State<FolderScreen> {
 
                 getfolder.files.add(_fileToAdd.path);
                 getfolder.save();
+                setState(() {});
               } catch (e) {
                 print(e);
               }

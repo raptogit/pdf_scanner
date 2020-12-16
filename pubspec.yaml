@@ -32,13 +32,15 @@ dependencies:
   path_provider: ^1.6.22
   image_cropper: ^1.3.1
   hive_flutter: ^0.3.1
-  hive:
+  hive: null
+  syncfusion_flutter_pdf: ^18.3.53-beta
+  permission_handler: ^5.0.1+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator:
-  build_runner:
+  hive_generator: null
+  build_runner: null
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

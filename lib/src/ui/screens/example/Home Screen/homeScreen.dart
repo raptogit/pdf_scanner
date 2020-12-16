@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pdf_scanner/src/models/folder_model.dart';
 import 'package:pdf_scanner/src/services/hive_pref.dart';
 import 'package:pdf_scanner/src/ui/screens/example/folderScreen/folder_screen.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,13 +17,36 @@ class _HomeScreenState extends State<HomeScreen> {
   List<File> _files = [];
   Box<Folder> _folderBox;
   TextEditingController _controller;
+  TextEditingController _saveNameController;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _saveNameController = TextEditingController();
     setState(() {
       _folderBox = Hive.box<Folder>(HiveInit.boxName);
     });
+  }
+
+  Future<void> generatePDF(List<String> imagesPath, {String pdfName}) async {
+    try {
+      final PdfDocument document = PdfDocument();
+
+      for (var imagePath in imagesPath) {
+        final PdfPage page = document.pages.add();
+        final Size pageSize = page.getClientSize();
+
+        final Uint8List imageData = File(imagePath).readAsBytesSync();
+        final PdfBitmap image = PdfBitmap(imageData);
+        page.graphics.drawImage(
+            image, Rect.fromLTWH(0, 0, pageSize.width, pageSize.height));
+      }
+      File('/storage/emulated/0/pictures/pdf_scanner/$pdfName.pdf')
+          .writeAsBytes(document.save());
+      document.dispose();
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -44,7 +69,59 @@ class _HomeScreenState extends State<HomeScreen> {
                     Folder folder = folderbox.get(keys[index]);
 
                     return ListTile(
-                      onTap: () {
+                      onLongPress: () {
+                        //longpress to create and save pdf to storage
+                        showDialog(
+                          context: context,
+                          child: Dialog(
+                            child: Container(
+                              color: Colors.white,
+                              height: 200,
+                              width: 400,
+                              padding: EdgeInsets.all(20),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Center(
+                                        child: TextField(
+                                      controller: _saveNameController,
+                                    )),
+                                  ),
+                                  Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Center(
+                                            child: Text("Cancel"),
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        TextButton(
+                                          onPressed: () async {
+                                            await generatePDF(folder.files,
+                                                    pdfName: _saveNameController
+                                                        .text)
+                                                .then((value) =>
+                                                    Navigator.pop(context));
+                                          },
+                                          child: Center(
+                                            child: Text("Create and Save PDF"),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      onTap: () async {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
