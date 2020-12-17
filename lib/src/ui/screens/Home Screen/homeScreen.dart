@@ -104,7 +104,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           actionLabel: "Create PDF and save to Storage",
                           controller: _saveNameController,
                           onPressed: () {
-                            homeModel.generatePDF();
+                            homeModel
+                                .generatePDF(
+                              imagesPath: folder.files,
+                              pdfName: _saveNameController.text,
+                            )
+                                .then((value) {
+                              _saveNameController.clear();
+                              Navigator.of(context).pop();
+                            });
                           },
                         );
                       },
