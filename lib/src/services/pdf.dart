@@ -4,16 +4,16 @@ import 'package:flutter/painting.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 abstract class GenPDFBase {
-  Future<void> generatePDF({List<String> imagesPath, String pdfName});
+  Future<void> generatePDF({List<String>? imagesPath, String? pdfName});
 }
 
 class GenPDF implements GenPDFBase {
   @override
-  Future<void> generatePDF({List<String> imagesPath, String pdfName}) async {
+  Future<void> generatePDF({List<String>? imagesPath, String? pdfName}) async {
     try {
       final PdfDocument document = PdfDocument();
 
-      for (var imagePath in imagesPath) {
+      for (var imagePath in imagesPath!) {
         final PdfPage page = document.pages.add();
         final Size pageSize = page.getClientSize();
 

@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pdf_scanner/src/models/folder_model.dart';
 import 'package:pdf_scanner/src/ui/screens/folderScreen/folder_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'homeScreen_viewModel.dart';
 
@@ -12,8 +13,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController _controller;
-  TextEditingController _saveNameController;
+  TextEditingController? _controller;
+  TextEditingController? _saveNameController;
   @override
   void initState() {
     super.initState();
@@ -27,14 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.didChangeDependencies();
   }
 
-  Future<Widget> showDialogC({
-    String actionLabel,
-    TextEditingController controller,
-    Function onPressed,
+  Future<Widget?> showDialogC({
+    String? actionLabel,
+    TextEditingController? controller,
+    Function? onPressed,
   }) async {
     return await showDialog(
       context: context,
-      child: Dialog(
+      builder: (context) => Dialog(
         child: Container(
           color: Colors.white,
           height: 200,
@@ -62,9 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(width: 10),
                     TextButton(
-                      onPressed: onPressed,
+                      onPressed: onPressed as void Function()?,
                       child: Center(
-                        child: Text(actionLabel),
+                        child: Text(actionLabel!),
                       ),
                     )
                   ],
@@ -87,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ValueListenableBuilder<Box<Folder>>(
-              valueListenable: homeModel.folderBox.listenable(),
+              valueListenable: homeModel.folderBox!.listenable(),
               builder: (context, folderbox, child) {
                 List<int> keys =
                     folderbox.keys.cast<int>().toList().reversed.toList();
@@ -95,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   shrinkWrap: true,
                   itemCount: keys.length,
                   itemBuilder: (context, index) {
-                    Folder folder = folderbox.get(keys[index]);
+                    Folder folder = folderbox.get(keys[index])!;
 
                     return ListTile(
                       onLongPress: () {
@@ -103,16 +104,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         showDialogC(
                           actionLabel: "Create PDF and save to Storage",
                           controller: _saveNameController,
-                          onPressed: () {
-                            homeModel
-                                .generatePDF(
-                              imagesPath: folder.files,
-                              pdfName: _saveNameController.text,
-                            )
-                                .then((value) {
-                              _saveNameController.clear();
-                              Navigator.of(context).pop();
-                            });
+                          onPressed: () async {
+                            final perm = await Permission.storage.request();
+                            if (perm.isGranted) {
+                              homeModel
+                                  .generatePDF(
+                                imagesPath: folder.files,
+                                pdfName: _saveNameController!.text,
+                              )
+                                  .then((value) {
+                                _saveNameController!.clear();
+                                Navigator.of(context).pop();
+                              });
+                            }
                           },
                         );
                       },
@@ -149,13 +153,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Folder newFolder = Folder(
                 createdOn: DateTime.now(),
                 files: [],
-                folderName: _controller.text,
+                folderName: _controller!.text,
                 numberOfItems: "",
               );
-              await homeModel.folderBox.add(newFolder).then(
+              await homeModel.folderBox!.add(newFolder).then(
                 (value) {
                   Navigator.pop(context);
-                  _controller.clear();
+                  _controller!.clear();
                 },
               );
             },

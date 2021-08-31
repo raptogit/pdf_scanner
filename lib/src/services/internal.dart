@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 abstract class InternalBase {
-  Future<File> saveFileOnStorage({String fileName});
+  Future<File?> saveFileOnStorage({String? fileName});
 }
 
 class Internal implements InternalBase {
   @override
-  Future<File> saveFileOnStorage({String fileName}) async {
-    File _file;
-    List<String> paths = fileName.split("/").toList();
+  Future<File?> saveFileOnStorage({String? fileName}) async {
+    File? _file;
+    List<String> paths = fileName!.split("/").toList();
     Directory _direct = await getApplicationDocumentsDirectory();
     final List<String> _directStrings = _direct.path.split('/');
     final newPath = _directStrings
@@ -38,7 +38,7 @@ class Internal implements InternalBase {
         },
       );
     }
-    print(_file.path);
+    print(_file!.path);
     return _file;
   }
 }

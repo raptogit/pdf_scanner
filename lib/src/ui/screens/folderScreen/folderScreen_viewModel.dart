@@ -11,22 +11,22 @@ import 'package:pdf_scanner/src/services/internal.dart';
 import 'package:pdf_scanner/src/utils/enums.dart';
 
 class FolderScreenViewModel extends ChangeNotifier {
-  Box<Folder> _folderBox;
+  late Box<Folder> _folderBox;
   FileState _fileState = FileState.empty;
-  File _file;
-  File _fileToAdd;
-  List<String> _files;
-  Folder _folder;
+  File? _file;
+  File? _fileToAdd;
+  List<String>? _files;
+  Folder? _folder;
 
-  void initState(int index) {
+  void initState(int? index) {
     _folderBox = Hive.box<Folder>(HiveInit.boxName);
     _folder = _folderBox.get(index);
     _fileState = FileState.empty;
-    _files = [..._folder.files];
+    _files = [..._folder!.files!];
   }
 
-  Future<File> editFile(File file) async {
-    File croppedFile;
+  Future<File?> editFile(File file) async {
+    File? croppedFile;
     if (_fileState == FileState.notEmpty) {
       croppedFile = await ImageCropper.cropImage(
           sourcePath: file.path,
@@ -74,15 +74,15 @@ class FolderScreenViewModel extends ChangeNotifier {
           if (value != null) {
             _fileState = FileState.notEmpty;
 
-            File _editedImageFile = await editFile(value);
+            File? _editedImageFile = await editFile(value);
 
             _file = _editedImageFile;
             notifyListeners();
             _fileToAdd =
-                await Internal().saveFileOnStorage(fileName: _file.path);
-            print("${_fileToAdd.path} and the rest");
+                await Internal().saveFileOnStorage(fileName: _file!.path);
+            print("${_fileToAdd!.path} and the rest");
 
-            _files.add(_fileToAdd.path);
+            _files!.add(_fileToAdd!.path);
           } else {
             _fileState = FileState.empty;
             print("null Emir");
@@ -97,9 +97,9 @@ class FolderScreenViewModel extends ChangeNotifier {
   void onPressed() {
     initFile().then((value) async {
       try {
-        var getfolder = _folder;
+        var getfolder = _folder!;
 
-        getfolder.files.add(_fileToAdd.path);
+        getfolder.files!.add(_fileToAdd!.path);
         getfolder.save();
         notifyListeners();
       } catch (e) {
@@ -108,9 +108,9 @@ class FolderScreenViewModel extends ChangeNotifier {
     });
   }
 
-  Folder get folder => _folder;
-  List<String> get files => _files;
-  File get fileToAdd => _fileToAdd;
-  File get file => _file;
+  Folder? get folder => _folder;
+  List<String>? get files => _files;
+  File? get fileToAdd => _fileToAdd;
+  File? get file => _file;
   FileState get fileState => _fileState;
 }
